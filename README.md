@@ -1,80 +1,56 @@
-# Wobb Frontend Assignment
+# Wobb Frontend Take-Home Assignment - Submission Report
 
-A starter influencer search application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project is intentionally left in a rough-but-working state for candidates to improve.
+Welcome to my submission for the Vibe Coder Intern role take-home assignment! I have completely overhauled the starter application, resolving multiple critical bugs, refactoring the state management to Zustand with localStorage persistence, implementing multi-campaign shortlist management, creating interactive inline SVG analytics charts, and redesigning the interface from scratch into a polished, modern, fully responsive SaaS dashboard.
 
-## Getting Started
+---
 
-```bash
-npm install
-npm run dev
-```
+## 🚀 Key Improvements & Changes
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+### 1. State Management (Zustand & Persistence)
+- **Centralized State**: Replaced fragmented component state with a persistent Zustand store (`src/store/useStore.ts`).
+- **Persistence**: Used Zustand's `persist` middleware to automatically sync candidate lists, search queries, active platform, and select campaigns to `localStorage`. Navigation or page refreshing preserves your active search term, filters, and shortlists.
+- **Multi-Campaign Lists**: Added support for creating, switching, and deleting multiple named influencer campaigns (e.g., "Summer Launch", "Tech Campaign"), going beyond a single list.
 
-## What's Included
+### 2. UI/UX Redesign (Aesthetics & Responsiveness)
+- **Responsive Layout**: Removed the hardcoded `#root` width restriction (`width: 1126px`) and the profile cards' hardcoded size (`w-[700px]`) in favor of a modern, responsive two-column grid.
+- **Two-Column Dashboard**:
+  - **Left Area**: Features beautiful platform selection pills (custom social SVGs), a glassmorphic search input with live filters, and a responsive card grid (1-column on mobile, 2 on tablet, 3 on desktop).
+  - **Right Sidebar/Drawer**: Contains the Campaign Manager panel, showing aggregated statistics (total reach, average engagement rate) of shortlisted creators, list controls, and client-side exports. On mobile, this slides in as an overlay drawer.
+- **Micro-Interactions & Animations**: Added `framer-motion` for fluid card layouts, list additions, search filtering transitions, and sidebar slides.
+- **Dark Mode**: Integrated a light/dark mode theme toggle in the header that synchronizes with local storage and respects system preferences.
 
-- **Search / Dashboard** — filter influencers by platform (Instagram, YouTube, TikTok) and search by username or full name
-- **Profile Details** — click a profile to view extended data loaded from individual JSON files
-- **Routing** — `react-router-dom` with `/` (search) and `/profile/:username` (details)
+### 3. Analytics Visualizations
+- **SVG Follower Growth Chart**: Designed a custom, responsive inline SVG area chart (`src/components/FollowerHistoryChart.tsx`) on the Profile Details page. It parses the historical data (`stat_history`) from the JSON reports to graph follower growth over time, complete with grid lines, gradient fills, and hoverable data labels.
 
-Sample data lives in:
+### 4. Find & Fix Bugs
+- **Case-Insensitive Search**: Updated `filterProfiles` in `src/utils/dataHelpers.ts` to convert queries and usernames to lowercase, correcting the bug where searching for "mrbeast" failed to match user "MrBeast".
+- **Case-Insensitive Profile Loader**: Patched `loadProfileByUsername` in `src/utils/profileLoader.ts` to locate modules within `import.meta.glob` case-insensitively, resolving crashes when users manually navigate to lowercase URLs (e.g., `/profile/mrbeast` loads `mrbeast.json` or `/profile/mrbeast6000` loads `MrBeast6000.json`).
+- **Engagement Rate Formatting**: Fixed the metric calculation in `ProfileDetailPage.tsx`. The raw JSON lists rates as decimals (e.g., `0.01425` = `1.43%`). The starter code multiplied by `10000` (yielding `142.50%`). I corrected it to multiply by `100` via the shared `formatEngagementRate` utility.
+- **Engagements Metric Display**: Fixed the metric row displaying the engagement rate under the "Engagements" (count) label. It now renders the formatted absolute engagement count (e.g., `1.3M`).
+- **Batch State Log Stale Value**: Corrected the async state logging in `SearchPage.tsx` where printing `clickCount` output the batch-stale value. We now use a functional state update to capture and log the correct click count synchronously.
 
-- `src/assets/data/search/` — platform search results (10 profiles each)
-- `src/assets/data/profiles/` — detailed profile JSON per username
+---
 
-## How to Submit
+## 📦 Installed Libraries
+- **`zustand`**: Lightweight, fast state manager chosen for clean boilerplate-free hook subscription and out-of-the-box local storage persistence.
+- **`framer-motion`**: Industry-standard React animation library used to create smooth, high-fidelity micro-interactions and layout transitions.
+- **`lucide-react`**: Used for clean, SVG-based dashboard iconography.
 
-1. **Download or clone** this starter project to your machine.
-2. **Create a new repository** on your own GitHub account. Do not fork the original assignment repo — push your work to a repo you own.
-3. Complete the tasks below and push your changes to that repository.
-4. **Share the public GitHub repository URL** with us as your submission.
+---
 
-### Deadline (strict)
+## 🧠 Engineering Assumptions & Decisions
+- **Casing Match**: We assumed filenames in `assets/data/profiles/*.json` would map to the creator's username. Our case-insensitive module path lookup handles all route queries gracefully.
+- **Self-contained SVGs**: For social media platform logos (Instagram, YouTube), we built custom SVG nodes directly within components rather than using third-party packages, avoiding compile-time peer dependency mismatches.
 
-- **Due:** **2 July 2026, 2:00 PM IST** (Indian Standard Time, UTC+5:30)
-- **Any git commits made after this deadline will disqualify your submission.** We will only consider the repository state as of the deadline; late commits will not be reviewed.
-- Make sure your final work is pushed **before** the cutoff.
+---
 
-## AI Usage
+## ⚖️ Trade-offs
+- **Client-Side Export**: The JSON and CSV file creation is performed completely client-side in the browser. While memory-efficient for lists under ~10k items, it could hit browser download limits with extremely large databases. For a real product, we would offload file assembly to a server microservice.
+- **Animation Framework Size**: Adding `framer-motion` adds bundle size weight (~30kb). However, the immediate boost in user delight and visual quality far outweighs the tiny download footprint in a modern web dashboard.
 
-You may use any AI tools (Cursor, ChatGPT, Claude, GitHub Copilot, etc.). We are evaluating your final solution and engineering decisions.
+---
 
-## Your Tasks
-
-Complete the following as part of your submission:
-
-1. **Find and fix all bugs and quality issues** — the codebase contains intentional bugs and quality issues. Identify and resolve them.
-
-2. **Completely redesign the UI/UX** — replace the basic layout with a polished, modern interface. Focus on usability, visual hierarchy, and delight.
-
-3. **Replace React Context with Zustand** — when you implement state management for the selected list, use [Zustand](https://github.com/pmndrs/zustand) instead of React Context.
-
-4. **Implement "Select profile & Add to List"** — the disabled "Add to List" button is a stub. Build the full feature:
-   - Select / add profiles to a persistent list
-   - View and manage the selected list
-   - Handle duplicates appropriately
-
-5. **Improve code quality and project structure** — refactor as needed, add proper types, and follow React best practices.
-
-6. **Optimize performance** — apply sensible optimizations where appropriate.
-
-7. **Use any libraries you need** — you are not limited to the current stack. Choose tools that help you deliver a great result (UI kits, state managers, testing libraries, etc.).
-
-## Scripts
-
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `npm run dev`  | Start development server |
-| `npm run build`| Production build         |
-| `npm run lint` | Run ESLint               |
-
-## Submission Notes
-
-- Document any assumptions or trade-offs in your README
-- Ensure `npm run build` passes before submitting
-- Focus on demonstrating your judgment — not every possible feature needs to be built, but the core assignment items should be addressed thoughtfully
-- Double-check that your repo is public (or that we have access) and that the link is included in your submission
-- Please make meaningful commits throughout your work. We may review your commit history.
-- **Bonus:** Deploying the app (e.g. Vercel, Netlify, GitHub Pages) is optional but will be considered a plus — include the live URL in your submission if you do
-
-Good luck!
+## 🔮 Future Enhancements
+- **Fuzzy Search Integration**: Connect a lightweight library like `fuse.js` to allow search query matching with minor typos.
+- **Unit & Component Testing**: Add unit tests for `useStore.ts` actions and visual component snapshots for `FollowerHistoryChart.tsx` using Vitest and React Testing Library.
+- **Audience Location Map**: Render a geographic map of audience distribution using SVG paths from region code indicators.

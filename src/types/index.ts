@@ -26,6 +26,18 @@ export interface SearchData {
   accounts: SearchAccount[];
 }
 
+export interface HistoryPoint {
+  month: string;
+  followers: number;
+  following?: number;
+  avg_likes?: number;
+  avg_comments?: number;
+  avg_views?: number;
+  avg_shares?: number;
+  avg_saves?: number;
+  total_likes?: number;
+}
+
 export interface FullUserProfile extends UserProfileSummary {
   type?: string;
   description?: string;
@@ -36,6 +48,7 @@ export interface FullUserProfile extends UserProfileSummary {
   avg_reels_plays?: number;
   gender?: string;
   age_group?: string;
+  stat_history?: HistoryPoint[];
 }
 
 export interface ProfileDetailResponse {
