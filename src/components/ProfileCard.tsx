@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { Platform, UserProfileSummary } from "@/types";
 import { VerifiedBadge } from "./VerifiedBadge";
@@ -106,76 +107,85 @@ export function ProfileCard({
   return (
     <div
       onClick={handleClick}
-      className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-white/70 dark:bg-gray-800/75 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/40 rounded-2xl cursor-pointer hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 shadow-sm hover:shadow-lg w-full max-w-full text-left"
+      className="group relative flex flex-col justify-between p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/40 rounded-3xl cursor-pointer hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-lg w-full text-center"
       data-search={searchQuery}
     >
-      <div className={`absolute top-0 left-0 w-1.5 h-full rounded-l-2xl bg-gradient-to-b ${platformColors.split(' ')[0]} ${platformColors.split(' ')[1]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+      {/* Platform color left accent border */}
+      <div className={`absolute top-0 left-0 w-1.5 h-full rounded-l-3xl bg-gradient-to-b ${platformColors.split(' ')[0]} ${platformColors.split(' ')[1]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
 
-      <div className="relative flex-shrink-0 self-start sm:self-center">
-        <img
-          src={profile.picture}
-          className="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm bg-gray-50"
-          alt={profile.fullname}
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${profile.username}`;
-          }}
-        />
-        <span className={`absolute -bottom-1 -right-1 p-1 rounded-full text-white bg-gradient-to-tr ${platformColors.split(' ')[0]} ${platformColors.split(' ')[1]} shadow-sm`}>
-          <PlatformIcon platform={platform} className="w-3.5 h-3.5" />
-        </span>
+      {/* Platform Logo Badge at Top-Right */}
+      <div className={`absolute top-4 right-4 p-1.5 rounded-full text-white bg-gradient-to-tr ${platformColors.split(' ')[0]} ${platformColors.split(' ')[1]} shadow-sm`}>
+        <PlatformIcon platform={platform} className="w-3.5 h-3.5" />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <h3 className="font-bold text-gray-900 dark:text-gray-100 truncate text-base hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            @{profile.username}
-          </h3>
-          <VerifiedBadge verified={profile.is_verified} />
+      {/* Avatar Section */}
+      <div className="flex flex-col items-center mt-2">
+        <div className="relative">
+          <img
+            src={profile.picture}
+            className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-md bg-gray-50 group-hover:scale-105 transition-transform duration-300"
+            alt={profile.fullname}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${profile.username}`;
+            }}
+          />
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-0.5">
-          {profile.fullname}
-        </p>
 
-        <div className="flex gap-4 mt-2">
-          <div>
-            <span className="text-xs text-gray-400 dark:text-gray-500 block uppercase tracking-wider font-semibold">
-              Followers
-            </span>
-            <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
-              {formatFollowersLocal(profile.followers)}
-            </span>
+        {/* Casing & Name Info */}
+        <div className="mt-4 w-full px-1">
+          <div className="flex items-center justify-center gap-1.5 flex-wrap">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 truncate text-base hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+              @{profile.username}
+            </h3>
+            <VerifiedBadge verified={profile.is_verified} />
           </div>
-          {profile.engagement_rate !== undefined && (
-            <div>
-              <span className="text-xs text-gray-400 dark:text-gray-500 block uppercase tracking-wider font-semibold">
-                Engagement
-              </span>
-              <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                {(profile.engagement_rate * 100).toFixed(2)}%
-              </span>
-            </div>
-          )}
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5 max-w-full">
+            {profile.fullname}
+          </p>
         </div>
       </div>
 
-      <div className="flex sm:flex-col items-stretch sm:items-end justify-between sm:justify-center gap-2 mt-4 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-gray-700/50">
+      {/* Stats Section with clean Dividers */}
+      <div className="grid grid-cols-2 gap-2 w-full py-2.5 px-3 bg-gray-50/50 dark:bg-gray-900/30 rounded-2xl border border-gray-100 dark:border-gray-800/40 my-4 text-center">
+        <div className="border-r border-gray-200/60 dark:border-gray-700/50">
+          <span className="text-[10px] text-gray-400 dark:text-gray-500 block uppercase tracking-wider font-bold">
+            Followers
+          </span>
+          <span className="text-sm font-extrabold text-gray-800 dark:text-gray-250">
+            {formatFollowersLocal(profile.followers)}
+          </span>
+        </div>
+        <div>
+          <span className="text-[10px] text-gray-400 dark:text-gray-500 block uppercase tracking-wider font-bold">
+            Engagement
+          </span>
+          <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+            {profile.engagement_rate !== undefined
+              ? `${(profile.engagement_rate * 100).toFixed(2)}%`
+              : "N/A"}
+          </span>
+        </div>
+      </div>
+
+      {/* Add To Shortlist Button */}
+      <div className="w-full">
         <button
           type="button"
           onClick={handleAddRemove}
-          className={`flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-200 cursor-pointer shadow-sm ${
+          className={`w-full flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-bold rounded-2xl transition-all duration-200 cursor-pointer shadow-sm ${
             isShortlisted
-              ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+              ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-800/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
               : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 hover:shadow"
           }`}
         >
           {isShortlisted ? (
             <>
-              <Check className="w-3.5 h-3.5" />
+              <Check className="w-3.5 h-3.5 stroke-[3]" />
               <span>Shortlisted</span>
             </>
           ) : (
             <>
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 stroke-[3]" />
               <span>Add to List</span>
             </>
           )}
